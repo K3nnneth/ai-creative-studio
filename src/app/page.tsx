@@ -190,7 +190,6 @@ export default function Home() {
         <div className="pointer-events-none absolute -bottom-36 right-[8%] -z-10 size-[420px] rounded-full bg-[#ffca68]/50 blur-[85px]" />
         <div className="pointer-events-none absolute bottom-[10%] right-[30%] -z-10 size-[280px] rounded-full bg-[#f18dff]/35 blur-[80px]" />
         <div className="mx-auto max-w-[820px] text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#d8cff0] bg-[#f7f2ff]/85 px-3 py-1.5 text-[11px] font-semibold text-[#625b6d] shadow-sm backdrop-blur"><Sparkles className="size-3.5 text-[#6655ea]" />AI creative partner</div>
           <h1 className="text-balance text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-[#201d25] sm:text-[64px] lg:text-[76px]">Your store has the goods. We’ll make the ads.</h1>
           <p className="mx-auto mt-6 max-w-[560px] text-pretty text-[15px] leading-7 text-[#736c7b] sm:text-base">Paste your store URL and we’ll bring your products to life with ad ideas ready for your review.</p>
           <form onSubmit={handleSubmit} className="mx-auto mt-9 max-w-[680px]">
