@@ -1,0 +1,25 @@
+# Local credentials; commit only the blank example.
+.env*
+!.env.example
+
+# Next.js and deployment output
+node_modules/
+.next/
+out/
+build/
+coverage/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local logs
+*.log
+.DS_Store
+*.pem

@@ -1,0 +1,373 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  --font-heading: Arial, Helvetica, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: #f7f6f8;
+  --foreground: #1e1b24;
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-width: 320px;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+.home-stage {
+  background:
+    radial-gradient(circle at 50% 40%, rgb(255 255 255 / 82%) 0 19%, transparent 44%),
+    radial-gradient(circle at 9% 12%, rgb(204 174 255 / 54%), transparent 34%),
+    radial-gradient(circle at 91% 16%, rgb(255 170 168 / 46%), transparent 33%),
+    radial-gradient(circle at 10% 88%, rgb(121 224 224 / 42%), transparent 34%),
+    radial-gradient(circle at 88% 88%, rgb(255 211 116 / 48%), transparent 36%),
+    linear-gradient(145deg, #f4edff 0%, #fff1f3 45%, #eefbff 72%, #fff9e8 100%);
+}
+
+.home-stage::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgb(92 76 242 / 14%) 0.8px, transparent 0.8px);
+  background-size: 24px 24px;
+  content: "";
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 45%), transparent 72%);
+  pointer-events: none;
+}
+
+.flow-track {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(111 99 130 / 18%);
+}
+
+.flow-track span {
+  position: absolute;
+  top: -2px;
+  left: -8px;
+  width: 8px;
+  height: 6px;
+  border-radius: 999px;
+  background: #6d5cf6;
+  box-shadow: 0 0 12px rgb(109 92 246 / 70%);
+  animation: travel 2.4s ease-in-out infinite;
+}
+
+.flow-track-output span {
+  background: #ef79a1;
+  animation-delay: 0.75s;
+}
+
+.product-input {
+  animation: product-feed 4.8s ease-in-out infinite;
+}
+
+.printer-glow {
+  animation: printer-pulse 2.4s ease-in-out infinite;
+}
+
+.creative-canvas {
+  animation: canvas-float 5.6s ease-in-out infinite;
+}
+
+.canvas-product {
+  animation: canvas-product-in 5.6s ease-in-out infinite;
+}
+
+.canvas-headline {
+  animation: canvas-line-draw 5.6s ease-in-out infinite;
+}
+
+.canvas-headline-two {
+  animation-delay: 0.18s;
+}
+
+.canvas-cta {
+  animation: canvas-cta-in 5.6s ease-in-out infinite;
+}
+
+.creative-brush {
+  left: calc(50% + 13px);
+  top: 18px;
+  animation: creative-brush-paint 5.6s ease-in-out infinite;
+}
+
+.creative-sparkle {
+  animation: creative-sparkle-pop 2.8s ease-in-out infinite;
+}
+
+.storefront-card {
+  animation: storefront-ready 5.6s ease-in-out infinite;
+}
+
+.typed-store-url {
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: type-store-url 5.6s steps(17, end) infinite;
+}
+
+.url-caret {
+  animation: url-caret-blink 0.75s step-end infinite;
+}
+
+.research-scan-line {
+  animation: research-scan 2.8s ease-in-out infinite;
+}
+
+.research-findings {
+  animation: findings-found 5.6s ease-in-out infinite;
+}
+
+.ad-output {
+  transform-origin: center bottom;
+  animation: ad-print 4.8s ease-in-out infinite;
+}
+
+.ad-output-1 {
+  transform: translate(-78%, -48%) rotate(-10deg);
+}
+
+.ad-output-2 {
+  z-index: 2;
+  transform: translate(-50%, -54%) rotate(0deg);
+  animation-delay: 0.18s;
+}
+
+.ad-output-3 {
+  transform: translate(-22%, -48%) rotate(10deg);
+  animation-delay: 0.36s;
+}
+
+@keyframes travel {
+  0%, 18% { transform: translateX(0); opacity: 0; }
+  28% { opacity: 1; }
+  78% { opacity: 1; }
+  92%, 100% { transform: translateX(48px); opacity: 0; }
+}
+
+@keyframes product-feed {
+  0%, 12%, 100% { transform: translateX(-3px); }
+  32%, 68% { transform: translateX(3px); }
+}
+
+@keyframes printer-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.94); }
+  50% { opacity: 0.65; transform: scale(1); }
+}
+
+@keyframes canvas-float {
+  0%, 100% { transform: translateY(1px) rotate(-1deg); }
+  50% { transform: translateY(-2px) rotate(1deg); }
+}
+
+@keyframes canvas-product-in {
+  0%, 12% { opacity: 0; transform: scale(0.45); }
+  27%, 86% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.35; transform: scale(0.85); }
+}
+
+@keyframes canvas-line-draw {
+  0%, 28% { opacity: 0; transform: scaleX(0); }
+  47%, 88% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0.35; transform: scaleX(0.85); }
+}
+
+@keyframes canvas-cta-in {
+  0%, 50% { opacity: 0; transform: scaleX(0); }
+  66%, 90% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0.35; transform: scaleX(0.85); }
+}
+
+@keyframes creative-brush-paint {
+  0%, 8% { opacity: 0; transform: translate(-32px, 45px) rotate(-45deg); }
+  16% { opacity: 1; }
+  32% { transform: translate(-30px, 2px) rotate(-35deg); }
+  48% { transform: translate(10px, 28px) rotate(-55deg); }
+  66% { transform: translate(-12px, 55px) rotate(-40deg); }
+  78% { opacity: 1; transform: translate(13px, 63px) rotate(-45deg); }
+  90%, 100% { opacity: 0; transform: translate(28px, 72px) rotate(-45deg); }
+}
+
+@keyframes creative-sparkle-pop {
+  0%, 100% { opacity: 0.3; transform: scale(0.65) rotate(0deg); }
+  48% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+}
+
+@keyframes storefront-ready {
+  0%, 100% { transform: translateY(0); }
+  12%, 20% { transform: translateY(-3px); }
+}
+
+@keyframes type-store-url {
+  0%, 12% { width: 0; }
+  48%, 82% { width: 17ch; }
+  96%, 100% { width: 0; }
+}
+
+@keyframes url-caret-blink {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+
+@keyframes research-scan {
+  0%, 100% { transform: translateY(-8px); opacity: 0; }
+  18% { opacity: 0.8; }
+  55% { transform: translateY(52px); opacity: 0.8; }
+  72% { transform: translateY(52px); opacity: 0; }
+}
+
+@keyframes findings-found {
+  0%, 20% { opacity: 0.35; transform: translateY(4px); }
+  42%, 88% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0.35; transform: translateY(4px); }
+}
+
+@keyframes ad-print {
+  0%, 24% { opacity: 0; margin-left: -24px; }
+  48%, 86% { opacity: 1; margin-left: 0; }
+  100% { opacity: 0.96; margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-track span,
+  .product-input,
+  .storefront-card,
+  .typed-store-url,
+  .url-caret,
+  .creative-canvas,
+  .canvas-product,
+  .canvas-headline,
+  .canvas-cta,
+  .creative-brush,
+  .creative-sparkle,
+  .research-scan-line,
+  .research-findings,
+  .printer-glow,
+  .ad-output {
+    animation: none;
+  }
+
+  .typed-store-url {
+    width: 17ch;
+  }
+}
