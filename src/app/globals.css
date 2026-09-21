@@ -239,8 +239,9 @@
 }
 
 .ad-output {
+  opacity: 0.6;
   transform-origin: center bottom;
-  animation: ad-print 4.8s ease-in-out infinite;
+  animation: ad-review-cycle 4.8s ease-in-out infinite;
 }
 
 .ad-output-1 {
@@ -250,12 +251,12 @@
 .ad-output-2 {
   z-index: 2;
   transform: translate(-50%, -54%) rotate(0deg);
-  animation-delay: 0.18s;
+  animation-delay: -1.6s;
 }
 
 .ad-output-3 {
   transform: translate(-22%, -48%) rotate(10deg);
-  animation-delay: 0.36s;
+  animation-delay: -3.2s;
 }
 
 @keyframes travel {
@@ -342,10 +343,9 @@
   100% { opacity: 0.35; transform: translateY(4px); }
 }
 
-@keyframes ad-print {
-  0%, 24% { opacity: 0; margin-left: -24px; }
-  48%, 86% { opacity: 1; margin-left: 0; }
-  100% { opacity: 0.96; margin-left: 0; }
+@keyframes ad-review-cycle {
+  0%, 100% { opacity: 0.55; margin-top: 2px; filter: saturate(0.8); }
+  35%, 65% { opacity: 1; margin-top: -3px; filter: saturate(1.08); }
 }
 
 @media (prefers-reduced-motion: reduce) {
