@@ -238,22 +238,22 @@
   animation: findings-found 5.6s ease-in-out infinite;
 }
 
-.ad-output {
+.concept-preview {
   transform-origin: center bottom;
   animation: ad-print 4.8s ease-in-out infinite;
 }
 
-.ad-output-1 {
+.concept-preview-1 {
   transform: translate(-78%, -48%) rotate(-10deg);
 }
 
-.ad-output-2 {
+.concept-preview-2 {
   z-index: 2;
   transform: translate(-50%, -54%) rotate(0deg);
   animation-delay: 0.18s;
 }
 
-.ad-output-3 {
+.concept-preview-3 {
   transform: translate(-22%, -48%) rotate(10deg);
   animation-delay: 0.36s;
 }
@@ -363,7 +363,7 @@
   .research-scan-line,
   .research-findings,
   .printer-glow,
-  .ad-output {
+  .concept-preview {
     animation: none;
   }
 

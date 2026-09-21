@@ -114,9 +114,9 @@ function CreativePrinter() {
         </div>
 
         <div className="pipeline-stage">
-          <div className="ad-stack relative mx-auto h-[118px] w-full">
+          <div className="concept-stack relative mx-auto h-[118px] w-full">
             {["#25212c", "#ec789a", "#73cbd0"].map((color, index) => (
-              <div className={`ad-output ad-output-${index + 1} absolute left-1/2 top-1/2 h-[105px] w-[59px] rounded-[10px] border-[3px] border-white p-2 text-left text-white shadow-[0_12px_24px_rgba(42,34,53,0.18)]`} style={{ backgroundColor: color }} key={color}>
+              <div className={`concept-preview concept-preview-${index + 1} absolute left-1/2 top-1/2 h-[105px] w-[59px] rounded-[10px] border-[3px] border-white p-2 text-left text-white shadow-[0_12px_24px_rgba(42,34,53,0.18)]`} style={{ backgroundColor: color }} key={color}>
                 <div className="mx-auto mt-1 size-7 rounded-full bg-white/25" /><div className="mt-3 h-1.5 w-full rounded-full bg-white/85" /><div className="mt-1.5 h-1.5 w-3/4 rounded-full bg-white/45" /><div className="mt-3 h-3 w-9 rounded-full bg-white/90" />
               </div>
             ))}
