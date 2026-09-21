@@ -4,10 +4,10 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { ArrowUp, Check, LoaderCircle, Sparkles } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
+import { AppHeader } from "@/components/app-header";
 
 type Creative = {
   id: string;
@@ -166,11 +166,11 @@ export default function CampaignPage() {
     finally { setGenerating(false); }
   }
 
-  if (!campaign && !error) return <main className="grid min-h-screen place-items-center bg-[#f3f0f7]"><LoaderCircle className="size-7 animate-spin text-[#5c4cf2]" /></main>;
-  if (!campaign) return <main className="grid min-h-screen place-items-center bg-[#f3f0f7] p-6"><div className="rounded-2xl bg-white p-6 text-center shadow-sm"><p className="text-sm text-[#a43c55]">{error}</p><button className="mt-4 rounded-xl bg-[#29252f] px-4 py-2.5 text-xs font-semibold text-white" onClick={() => window.location.reload()}>Try again</button></div></main>;
+  if (!campaign && !error) return <main className="min-h-screen bg-[#f3f0f7]"><AppHeader active="campaigns" /><div className="grid min-h-[calc(100vh-68px)] place-items-center"><LoaderCircle className="size-7 animate-spin text-[#5c4cf2]" /></div></main>;
+  if (!campaign) return <main className="min-h-screen bg-[#f3f0f7]"><AppHeader active="campaigns" /><div className="grid min-h-[calc(100vh-68px)] place-items-center p-6"><div className="rounded-2xl bg-white p-6 text-center shadow-sm"><p className="text-sm text-[#a43c55]">{error}</p><button className="mt-4 rounded-xl bg-[#29252f] px-4 py-2.5 text-xs font-semibold text-white" onClick={() => window.location.reload()}>Try again</button></div></div></main>;
 
-  return <main className="min-h-screen bg-[#f3f0f7] px-5 py-8 text-[#1e1b24] sm:px-8 sm:py-12"><div className="mx-auto max-w-[1180px]">
-    <nav className="mb-7 flex items-center justify-between"><button type="button" onClick={() => router.back()} className="text-xs font-semibold text-[#6655ea]">← Back</button><div className="flex items-center gap-4"><Link className="text-xs font-semibold text-[#6655ea]" href="/campaigns">All campaigns</Link><Link className="text-xs font-semibold text-[#817989]" href="/">AI Creative Studio</Link></div></nav><div className="mb-7"><div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-[#655e6d] shadow-sm"><Sparkles className="size-3.5 text-[#6655ea]" />Campaign workspace</div><h1 className="text-3xl font-semibold tracking-[-0.045em] sm:text-5xl">{campaign.products.title}</h1></div>
+  return <main className="min-h-screen bg-[#f3f0f7] text-[#1e1b24]"><AppHeader active="campaigns" /><div className="mx-auto max-w-[1180px] px-5 py-8 sm:px-8 sm:py-12">
+    <button type="button" onClick={() => router.back()} className="mb-7 text-xs font-semibold text-[#6655ea]">← Back</button><div className="mb-7"><div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-[#655e6d] shadow-sm"><Sparkles className="size-3.5 text-[#6655ea]" />Campaign workspace</div><h1 className="text-3xl font-semibold tracking-[-0.045em] sm:text-5xl">{campaign.products.title}</h1></div>
     <section className="grid overflow-hidden rounded-[28px] border border-white bg-white/90 shadow-[0_20px_60px_rgba(50,40,70,0.08)] lg:grid-cols-[0.82fr_1.18fr]">
       <div className="min-h-[360px] bg-[#f2eef5] bg-contain bg-center bg-no-repeat lg:min-h-[600px]" style={campaign.imageUrl ? { backgroundImage: `url(${JSON.stringify(campaign.imageUrl).slice(1, -1)})` } : undefined} />
       <div className="flex flex-col justify-between p-6 sm:p-9 lg:p-12"><div><h2 className="text-2xl font-semibold tracking-[-0.025em]">{campaign.products.title}</h2><p className="mt-2 text-sm text-[#655e6d]">{campaign.products.price_amount === null ? "Price unavailable" : new Intl.NumberFormat("en-US", { style: "currency", currency: campaign.products.currency }).format(campaign.products.price_amount)}</p><div className="mt-8 border-t border-[#ece8f1] pt-6"><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8b8495]">Audience</p><p className="mt-2 text-base leading-7 text-[#5e5765]">{campaign.audience}</p></div><div className="mt-6 border-t border-[#ece8f1] pt-6"><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8b8495]">Campaign direction</p><p className="mt-2 text-base leading-7 text-[#5e5765]">{campaign.angle}</p></div></div>{campaign.creatives.length === 0 && <div className="mt-10"><button type="button" disabled={generating} onClick={generateConcepts} className="inline-flex items-center gap-2 rounded-xl bg-[#5c4cf2] px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(92,76,242,0.22)] disabled:opacity-60">{generating ? <LoaderCircle className="size-4 animate-spin" /> : <Sparkles className="size-4" />}{generating ? "Creating concepts…" : "Create three concepts"}</button>{generating && <p className="mt-3 text-[11px] text-[#938a9b]">This may take a few minutes. Keep this page open.</p>}{notice && <p className="mt-4 text-xs font-medium text-[#a43c55]">{notice}</p>}</div>}</div>
