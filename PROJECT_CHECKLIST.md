@@ -24,7 +24,7 @@ Last updated: September 19, 2026
 - [x] 18. Build campaign persistence and navigation
 - [x] 19. Add empty, loading, error, retry, and success states
 - [x] 20. Test Loopy Cases end to end
-- [ ] 21. Test four additional ecommerce stores
+- [x] 21. Test four additional ecommerce stores
 - [ ] 22. Create and push the GitHub repository
 - [ ] 23. Deploy to Vercel and verify production
 - [ ] 24. Draw the Excalidraw architecture diagram
@@ -232,13 +232,15 @@ The approved creative is `64ded495-7253-4521-9ee7-aae260554417`. Both the creati
 
 ## Step 21 — Additional store testing
 
-The project owner chose to test two additional stores first and drive the UI personally while development support follows the persisted results.
+- [x] Loopy Cases — full research-to-approval path, including a feedback-driven child variant.
+- [x] Death Wish Coffee — dark brand voice and packaged goods; rerun after removing Loopy-specific prompt language.
+- [x] tentree — apparel variants, lifestyle photography, and sustainability messaging.
+- [x] Allbirds — footwear, natural visual identity, and an all-day versatility direction.
+- [x] OLIPOP — packaged beverage photography, bright identity, and nostalgic flavor positioning.
 
-- [ ] Death Wish Coffee — contrasting dark brand voice and packaged goods catalog.
-- [ ] tentree — apparel catalog with variants, lifestyle photography, and sustainability messaging.
-- [ ] Add two more stores before the final five-store Loom deliverable.
+All five stores produced persisted research and reviewable creative results. Loopy completed the full approval loop. Death Wish, tentree, Allbirds, and OLIPOP confirmed that generation is grounded in each saved brand, product, audience, and campaign direction rather than a store-specific template.
 
-The first Death Wish walkthrough successfully exercised research, selection, generation, editing, variant creation, and approval, but exposed Loopy-specific copy and preservation language in the initial generation template. That run remains useful failure evidence but does not count as a passed cross-store creative test. The generator now creates three product-specific concepts from the persisted brand, product, audience, and selected direction, with a deterministic fallback if concept generation fails. The next store test will validate this correction before Death Wish is rerun.
+The cross-store run also exercised recovery paths without unnecessary paid calls: invalid URLs return actionable validation, missing campaigns return a clear not-found state, Firecrawl failure can retain a valid Shopify catalog, brand analysis can retry from saved evidence, and generation failures preserve the campaign for retry. The OLIPOP analysis initially returned overly long model fields; the parser now safely trims verbose text, and the retry completed from persisted evidence without another Firecrawl request.
 
 ## Step 1 — Agreed MVP
 

@@ -1,18 +1,20 @@
 import { generateText } from "ai";
 import { z } from "zod";
 
+const conciseString = (minimum: number, maximum: number) => z.string().min(minimum).transform((value) => value.slice(0, maximum));
+
 const brandAnalysisSchema = z.object({
-  voice: z.string().min(10).max(500),
-  audience: z.string().min(10).max(500),
-  valueProposition: z.string().min(10).max(500),
+  voice: conciseString(10, 500),
+  audience: conciseString(10, 500),
+  valueProposition: conciseString(10, 500),
   adAngles: z.array(z.object({
-    name: z.string().min(2).max(80),
-    rationale: z.string().min(10).max(300),
+    name: conciseString(2, 80),
+    rationale: conciseString(10, 300),
   })).min(3),
   evidence: z.object({
-    voice: z.array(z.string().max(220)).min(1),
-    audience: z.array(z.string().max(220)).min(1),
-    valueProposition: z.array(z.string().max(220)).min(1),
+    voice: z.array(conciseString(1, 220)).min(1),
+    audience: z.array(conciseString(1, 220)).min(1),
+    valueProposition: z.array(conciseString(1, 220)).min(1),
   }),
 });
 
