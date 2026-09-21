@@ -2,6 +2,9 @@
 
 AI Creative Studio turns a Shopify store URL into reviewable 9:16 image ads made from real catalog products. It researches the brand, builds a reusable product catalog, generates product-referenced concepts, and lets a marketer edit, regenerate, and approve the result.
 
+**Live app:** [ai-creative-studio-neon.vercel.app](https://ai-creative-studio-neon.vercel.app)  
+**Repository:** [github.com/K3nnneth/ai-creative-studio](https://github.com/K3nnneth/ai-creative-studio)
+
 ## Product flow
 
 1. Submit a Shopify store or product URL.

@@ -26,7 +26,7 @@ Last updated: September 19, 2026
 - [x] 20. Test Loopy Cases end to end
 - [x] 21. Test four additional ecommerce stores
 - [x] 22. Create and push the GitHub repository
-- [ ] 23. Deploy to Vercel and verify production
+- [x] 23. Deploy to Vercel and verify production
 - [ ] 24. Draw the Excalidraw architecture diagram
 - [ ] 25. Write the personal build note
 - [ ] 26. Record the two-part Loom walkthrough
@@ -241,6 +241,14 @@ The approved creative is `64ded495-7253-4521-9ee7-aae260554417`. Both the creati
 All five stores produced persisted research and reviewable creative results. Loopy completed the full approval loop. Death Wish, tentree, Allbirds, and OLIPOP confirmed that generation is grounded in each saved brand, product, audience, and campaign direction rather than a store-specific template.
 
 The cross-store run also exercised recovery paths without unnecessary paid calls: invalid URLs return actionable validation, missing campaigns return a clear not-found state, Firecrawl failure can retain a valid Shopify catalog, brand analysis can retry from saved evidence, and generation failures preserve the campaign for retry. The OLIPOP analysis initially returned overly long model fields; the parser now safely trims verbose text, and the retry completed from persisted evidence without another Firecrawl request.
+
+## Steps 22–23 — Repository and production deployment
+
+- [x] Publish the public GitHub repository at `https://github.com/K3nnneth/ai-creative-studio`.
+- [x] Connect the `main` branch to Vercel for automatic deployments.
+- [x] Save all required credentials as Vercel project environment variables for production and previews.
+- [x] Set the Vercel framework preset to Next.js and disable login protection for the public take-home URL.
+- [x] Verify the public homepage, saved campaign list, Supabase-backed records, and durable creative images at `https://ai-creative-studio-neon.vercel.app`.
 
 ## Step 1 — Agreed MVP
 
