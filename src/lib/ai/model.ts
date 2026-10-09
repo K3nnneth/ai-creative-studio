@@ -17,5 +17,6 @@ export function getAiModel() {
 export const freeGatewayOptions = {
   gateway: {
     has: ["free"],
+    models: ["stealth/glyph-cluster", "convaiinnovations/laya"],
   },
 } as const;
