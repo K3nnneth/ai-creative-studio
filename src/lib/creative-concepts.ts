@@ -1,6 +1,8 @@
 import { generateText } from "ai";
 import { z } from "zod";
 
+import { freeGatewayOptions, getAiModel } from "@/lib/ai/model";
+
 const conceptsSchema = z.array(z.object({
   headline: z.string().trim().min(2).max(64),
   cta: z.string().trim().min(2).max(30),
@@ -18,10 +20,11 @@ export async function createCreativeConcepts(input: {
   voice: string | null;
   valueProposition: string | null;
 }) {
-  const model = process.env.AI_MODEL?.trim() || "inclusionai/ling-3.0-flash-vl-free";
+  const model = getAiModel();
   try {
     const { text } = await generateText({
       model,
+      providerOptions: freeGatewayOptions,
       temperature: 0.45,
       prompt: `Create three distinct concepts for a portrait ecommerce image ad. Return only a JSON array with exactly this shape:
 [{"headline":"2-64 characters","cta":"2-30 characters","treatment":"10-240 characters"}]

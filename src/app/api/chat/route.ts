@@ -1,6 +1,7 @@
 import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from "ai";
 import { z } from "zod";
 
+import { freeGatewayOptions, getAiModel } from "@/lib/ai/model";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -41,9 +42,10 @@ export async function POST(request: Request) {
     imageAvailable: Boolean(creative.generation_metadata?.finalUrl ?? creative.generation_metadata?.backgroundUrl),
   }));
 
-  const model = process.env.AI_MODEL?.trim() || "inclusionai/ling-3.0-flash-vl-free";
+  const model = getAiModel();
   const result = streamText({
     model,
+    providerOptions: freeGatewayOptions,
     temperature: 0.35,
     system: `You are the creative advisor inside AI Creative Studio. Help a marketer review and improve 9:16 image ads for the selected real product. Be concise, practical, and transparent about what is extracted versus suggested. Never invent product features, prices, discounts, or guarantees. When the user asks about, compares, or evaluates the generated creatives, you must call getCampaignCreatives before answering.
 

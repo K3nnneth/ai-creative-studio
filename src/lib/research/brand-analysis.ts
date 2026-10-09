@@ -1,6 +1,8 @@
 import { generateText } from "ai";
 import { z } from "zod";
 
+import { freeGatewayOptions, getAiModel } from "@/lib/ai/model";
+
 const conciseString = (minimum: number, maximum: number) => z.string().min(minimum).transform((value) => value.slice(0, maximum));
 
 const brandAnalysisSchema = z.object({
@@ -26,9 +28,10 @@ export async function analyzeBrand(input: {
   homepageMarkdown: string;
   products: Array<{ title: string; description: string | null; productType: string | null; priceAmount: number | null }>;
 }) {
-  const model = process.env.AI_MODEL?.trim() || "inclusionai/ling-3.0-flash-vl-free";
+  const model = getAiModel();
   const { text } = await generateText({
     model,
+    providerOptions: freeGatewayOptions,
     temperature: 0.2,
     prompt: `Analyze this ecommerce brand for a marketer preparing image ads. Return only valid JSON with this exact shape:
 {"voice":"string","audience":"string","valueProposition":"string","adAngles":[{"name":"string","rationale":"string"}],"evidence":{"voice":["string"],"audience":["string"],"valueProposition":["string"]}}
