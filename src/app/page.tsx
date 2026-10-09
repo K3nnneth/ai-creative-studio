@@ -155,6 +155,7 @@ export default function Home() {
       if (!response.ok || !responseBody.result) throw new Error(responseBody.error ?? "We couldn’t research this store. Please try again.");
       setResearchResult(responseBody.result);
       setSubmitted(true);
+      router.replace(`/?brandId=${encodeURIComponent(responseBody.result.brand.id)}`);
     } catch (error) {
       setSubmitted(false);
       setSubmitError(error instanceof Error ? error.message : "We couldn’t start research. Please try again.");

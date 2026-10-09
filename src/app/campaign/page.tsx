@@ -1,12 +1,9 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import { ArrowUp, Check, LoaderCircle, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, LoaderCircle, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
 import { AppHeader } from "@/components/app-header";
 
 type Creative = {
@@ -31,40 +28,6 @@ type Campaign = {
   products: { title: string; description: string | null; price_amount: number | null; currency: string };
   creatives: Creative[];
 };
-
-function AdvisorPart({ part, index }: { part: unknown; index: number }) {
-  const item = part as { type?: string; state?: string; output?: { product?: string; creatives?: Array<{ concept: number; headline: string; cta: string; status: string }> } };
-  if (item.type === "text") return <MessageResponse key={index}>{(part as { text: string }).text}</MessageResponse>;
-  if (item.type !== "tool-getCampaignCreatives") return null;
-  if (item.state !== "output-available" || !item.output) return <div key={index} className="flex items-center gap-2 rounded-xl bg-[#f5f2fa] p-3 text-xs text-[#756e7e]"><LoaderCircle className="size-3.5 animate-spin" />Reviewing saved creatives</div>;
-  return <div key={index} className="rounded-2xl border border-[#e3ddec] bg-[#faf9fc] p-4"><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#817989]">Creative set loaded</p><p className="mt-1 text-xs text-[#655e6d]">{item.output.product}</p><div className="mt-3 grid gap-2 sm:grid-cols-3">{item.output.creatives?.map((creative) => <div className="rounded-xl bg-white p-3 shadow-sm" key={`${creative.concept}-${creative.headline}`}><p className="text-[9px] font-bold uppercase text-[#6655ea]">Concept {creative.concept}</p><p className="mt-1 text-xs font-semibold text-[#29252f]">{creative.headline}</p><p className="mt-1 text-[10px] text-[#817989]">{creative.cta}</p></div>)}</div></div>;
-}
-
-function CampaignChat({ campaign }: { campaign: Campaign }) {
-  const [input, setInput] = useState("");
-  const transport = useMemo(() => new DefaultChatTransport({ api: "/api/chat", body: { campaignId: campaign.id } }), [campaign.id]);
-  const { messages, sendMessage, regenerate, clearError, status, error } = useChat({
-    transport,
-    messages: [{ id: "welcome", role: "assistant", parts: [{ type: "text", text: `I can help you explore more ideas for **${campaign.products.title}** while staying grounded in the **${campaign.angle}** direction. Ask for a new angle, headline, or visual approach.` }] }],
-  });
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!input.trim() || status === "streaming" || status === "submitted") return;
-    sendMessage({ text: input });
-    setInput("");
-  }
-
-  return <section className="flex min-h-[420px] flex-col rounded-[26px] border border-white bg-white/90 p-5 shadow-[0_20px_60px_rgba(50,40,70,0.08)] sm:p-6">
-    <div className="border-b border-[#ece8f1] pb-4"><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8b8495]">Creative advisor</p><h2 className="mt-1 text-lg font-semibold">Explore another direction</h2><p className="mt-1 text-xs text-[#817989]">Use chat to brainstorm. Use feedback on a selected creative when you want to generate a new version.</p></div>
-    <div className="flex-1 space-y-5 overflow-y-auto py-5">
-      {messages.map((message) => <Message from={message.role} key={message.id}><MessageContent>{message.parts.map((part, index) => <AdvisorPart part={part} index={index} key={index} />)}</MessageContent></Message>)}
-      {(status === "submitted" || status === "streaming") && <div className="flex items-center gap-2 text-xs text-[#7b7383]"><LoaderCircle className="size-3.5 animate-spin" />Agent is responding</div>}
-      {error && <div className="rounded-xl bg-[#fff0f3] p-3"><p className="text-xs font-medium text-[#a43c55]">The advisor could not respond.</p><button type="button" className="mt-2 text-[11px] font-semibold text-[#6b4050] underline underline-offset-2" onClick={() => { clearError(); regenerate(); }}>Try again</button></div>}
-    </div>
-    <form className="flex gap-2 rounded-2xl border border-[#ddd7e5] bg-white p-2" onSubmit={submit}><input className="min-w-0 flex-1 bg-transparent px-2 text-sm outline-none" placeholder="What do you think of the generated creatives?" value={input} onChange={(event) => setInput(event.target.value)} /><button className="grid size-10 place-items-center rounded-xl bg-[#5c4cf2] text-white disabled:opacity-40" disabled={!input.trim() || status === "streaming" || status === "submitted"} aria-label="Send message"><ArrowUp className="size-4" /></button></form>
-  </section>;
-}
 
 export default function CampaignPage() {
   const router = useRouter();
@@ -183,6 +146,5 @@ export default function CampaignPage() {
         <div><p className="text-xs font-bold uppercase tracking-[0.12em] text-[#817989]">Create a new version</p><label className="mt-4 block text-xs font-semibold">What should look different?<textarea className="mt-1.5 min-h-24 w-full resize-y rounded-xl border border-[#ddd7e5] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#6655ea]" placeholder={`Example: Use a brighter scene and emphasize what makes ${campaign.products.title} distinctive.`} maxLength={500} value={feedback} onChange={(event) => setFeedback(event.target.value)} /></label><div className="mt-4 flex flex-wrap gap-2"><button type="button" onClick={regenerate} disabled={!!busy || feedback.trim().length < 3 || !headline.trim() || !cta.trim()} className="rounded-xl border border-[#6655ea] bg-white px-4 py-2.5 text-xs font-semibold text-[#5c4cf2] disabled:opacity-50">{busy === "regenerate" ? "Creating variant…" : "Generate new variant"}</button><button type="button" onClick={() => updateCreative({}, "approve")} disabled={!!busy || selected.status === "approved"} className="inline-flex items-center gap-2 rounded-xl bg-[#5c4cf2] px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50"><Check className="size-3.5" />{busy === "approve" ? "Approving…" : selected.status === "approved" ? "Approved" : "Approve this creative"}</button></div>{notice && <p className="mt-3 text-xs font-medium text-[#6655ea]">{notice}</p>}</div>
       </div>}
     </section>}
-    {campaign.creatives.length > 0 && <div className="mt-5"><CampaignChat campaign={campaign} /></div>}
   </div></main>;
 }

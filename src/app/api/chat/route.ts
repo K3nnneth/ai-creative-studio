@@ -2,70 +2,73 @@ import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from 
 import { z } from "zod";
 
 import { freeGatewayOptions, getAiModel } from "@/lib/ai/model";
-import { getSupabaseAdmin } from "@/lib/supabase/server";
+import { DEMO_WORKSPACE_ID, getSupabaseAdmin } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const requestSchema = z.object({ campaignId: z.string().uuid(), messages: z.array(z.custom<UIMessage>()) });
+const requestSchema = z.object({
+  page: z.enum(["onboarding", "review", "campaign", "campaigns"]).default("onboarding"),
+  brandId: z.string().uuid().optional(),
+  campaignId: z.string().uuid().optional(),
+  messages: z.array(z.custom<UIMessage>()),
+});
+
+type CreativeContext = { concept: number; headline: string; cta: string; status: string; version: number | null; feedback: string | null; visualDirection: string | null; imageAvailable: boolean };
 
 export async function POST(request: Request) {
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return Response.json({ error: "A valid campaign conversation is required." }, { status: 400 });
+  if (!parsed.success) return Response.json({ error: "A valid advisor conversation is required." }, { status: 400 });
 
   const supabase = getSupabaseAdmin();
-  const [{ data: campaign, error }, { data: creatives, error: creativesError }] = await Promise.all([
-    supabase
-      .from("campaigns")
-      .select("id, name, angle, audience, status, brands(name, voice, value_proposition, colors), products(title, description, price_amount, currency)")
-      .eq("id", parsed.data.campaignId)
-      .single(),
-    supabase
-      .from("creatives")
-      .select("id, headline, cta, status, version, feedback_summary, generation_prompt, generation_metadata")
-      .eq("campaign_id", parsed.data.campaignId)
-      .order("created_at", { ascending: true })
-      .limit(12),
-  ]);
-  if (error || !campaign) return Response.json({ error: "Campaign not found." }, { status: 404 });
-  if (creativesError) return Response.json({ error: "Campaign creatives could not be loaded." }, { status: 500 });
+  const { page, brandId, campaignId } = parsed.data;
+  let pageContext: Record<string, unknown> = { stage: page };
+  let creativeContext: CreativeContext[] = [];
 
-  const product = Array.isArray(campaign.products) ? campaign.products[0] : campaign.products;
-  const creativeContext = (creatives ?? []).map((creative, index) => ({
-    concept: index + 1,
-    headline: creative.headline,
-    cta: creative.cta,
-    status: creative.status,
-    version: creative.version,
-    feedback: creative.feedback_summary,
-    visualDirection: creative.generation_prompt,
-    imageAvailable: Boolean(creative.generation_metadata?.finalUrl ?? creative.generation_metadata?.backgroundUrl),
-  }));
+  if (page === "campaign" && campaignId) {
+    const [{ data: campaign, error }, { data: creatives, error: creativesError }] = await Promise.all([
+      supabase.from("campaigns").select("id, name, angle, audience, status, brands(name, voice, audience, value_proposition, colors), products(title, description, price_amount, currency)").eq("id", campaignId).eq("workspace_id", DEMO_WORKSPACE_ID).single(),
+      supabase.from("creatives").select("headline, cta, status, version, feedback_summary, generation_prompt, generation_metadata").eq("campaign_id", campaignId).order("created_at", { ascending: true }).limit(12),
+    ]);
+    if (error || !campaign) return Response.json({ error: "Campaign not found." }, { status: 404 });
+    if (creativesError) return Response.json({ error: "Campaign creatives could not be loaded." }, { status: 500 });
+    creativeContext = (creatives ?? []).map((creative, index) => ({ concept: index + 1, headline: creative.headline, cta: creative.cta, status: creative.status, version: creative.version, feedback: creative.feedback_summary, visualDirection: creative.generation_prompt, imageAvailable: Boolean(creative.generation_metadata?.finalUrl ?? creative.generation_metadata?.backgroundUrl) }));
+    pageContext = { stage: page, campaign, creatives: creativeContext };
+  } else if (page === "review" || (page === "onboarding" && brandId)) {
+    let brandQuery = supabase.from("brands").select("id, name, canonical_domain, colors, voice, audience, value_proposition, evidence, research_status").eq("workspace_id", DEMO_WORKSPACE_ID);
+    brandQuery = brandId ? brandQuery.eq("id", brandId) : brandQuery.order("updated_at", { ascending: false }).limit(1);
+    const { data: brands, error } = await brandQuery;
+    const brand = brands?.[0];
+    if (error) return Response.json({ error: "Brand research could not be loaded." }, { status: 500 });
+    if (brand) {
+      const { data: products } = await supabase.from("products").select("title, description, product_type, price_amount, currency, status").eq("brand_id", brand.id).neq("status", "hidden").order("position").limit(12);
+      pageContext = { stage: page, brand, catalogSample: products ?? [] };
+    } else pageContext = { stage: page, note: "No researched brand is available yet." };
+  } else if (page === "campaigns") {
+    const { data: campaigns, error } = await supabase.from("campaigns").select("id, name, status, angle, updated_at, brands(name), products(title)").eq("workspace_id", DEMO_WORKSPACE_ID).order("updated_at", { ascending: false }).limit(12);
+    if (error) return Response.json({ error: "Campaigns could not be loaded." }, { status: 500 });
+    pageContext = { stage: page, campaigns: campaigns ?? [] };
+  }
 
-  const model = getAiModel();
+  const stageGuidance = {
+    onboarding: "Explain the workflow and help the user prepare a useful store submission. Do not claim a store has been researched when context says none is available.",
+    review: "Help the marketer audit the brand interpretation. Clearly distinguish facts or extracted evidence from inference. When suggesting revised voice, audience, value proposition, or angles, give concise copy the user can paste into the form. Do not say you changed the form.",
+    campaign: "Help refine campaign strategy and saved creatives. When asked to evaluate or compare generated creatives, call getCampaignCreatives first. You cannot inspect image pixels, so do not claim that you can see visual details absent from the records.",
+    campaigns: "Help the marketer understand campaign status and decide what work to revisit next.",
+  };
+
   const result = streamText({
-    model,
-    providerOptions: freeGatewayOptions,
-    temperature: 0.35,
-    system: `You are the creative advisor inside AI Creative Studio. Help a marketer review and improve 9:16 image ads for the selected real product. Be concise, practical, and transparent about what is extracted versus suggested. Never invent product features, prices, discounts, or guarantees. When the user asks about, compares, or evaluates the generated creatives, you must call getCampaignCreatives before answering.
+    model: getAiModel(), providerOptions: freeGatewayOptions, temperature: 0.3,
+    system: `You are the context-aware Studio advisor inside AI Creative Studio. You follow the marketer throughout research, review, generation, and approval. Be concise, practical, and transparent. Never invent product features, prices, discounts, guarantees, research evidence, or actions you did not perform. Advice does not automatically alter saved data; tell the user to apply a suggestion in the visible controls when appropriate.
 
-The saved creative records below are the concepts currently displayed in the campaign workspace. Treat a creative with imageAvailable=true as generated. You can compare its headline, CTA, status, feedback, and recorded visual direction. You cannot directly inspect image pixels, so say so briefly when a question depends on a visual detail that is not present in the records. Never claim that no creatives exist when the creative list is non-empty.
+Current-stage guidance:
+${stageGuidance[page]}
 
-Campaign context:
-${JSON.stringify(campaign)}
-
-Saved creatives:
-${JSON.stringify(creativeContext)}`,
+Current saved context:
+${JSON.stringify(pageContext)}`,
     messages: await convertToModelMessages(parsed.data.messages),
-    tools: {
-      getCampaignCreatives: {
-        description: "Load the campaign's current generated creative concepts before evaluating or comparing them.",
-        inputSchema: z.object({}),
-        execute: async () => ({ product: product?.title ?? campaign.name, direction: campaign.angle, creatives: creativeContext }),
-      },
-    },
+    tools: { getCampaignCreatives: { description: "Load the current campaign's saved creative records before evaluating or comparing them.", inputSchema: z.object({}), execute: async () => ({ creatives: creativeContext }) } },
     stopWhen: stepCountIs(3),
   });
-
   return result.toUIMessageStreamResponse();
 }
